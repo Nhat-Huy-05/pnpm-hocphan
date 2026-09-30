@@ -15,4 +15,4 @@ tạo rào cản cho người muốn tích hợp code vào dự án riêng hoặ
 Vì đây chỉ là kho bài tập cá nhân, không phải sản phẩm cần bảo vệ tính mở
 tuyệt đối, nên MIT phù hợp hơn: đơn giản, dễ hiểu, được cộng đồng lập trình
 viên và nhà tuyển dụng quen thuộc, đồng thời không gây khó khăn cho ai muốn
-tham khảo hoặc tái sử dụng.
+tham khảo hoặc tái sử dụng. 

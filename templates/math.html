@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Máy tính cơ bản</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #e0f7fa, #f5f7ff);
+        color: #1f2937;
+      }
+
+      .card {
+        width: 420px;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        padding: 28px 24px;
+      }
+
+      h2 {
+        text-align: center;
+        margin: 0 0 24px;
+        color: #0f172a;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+
+      input:focus {
+        border-color: #3b82f6;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 8px;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          opacity 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        opacity: 0.96;
+      }
+
+      .result-box {
+        margin-top: 22px;
+        padding: 18px 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+      }
+
+      .result-box h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .result-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #dbe3ef;
+        font-size: 15px;
+      }
+
+      .result-row:last-child {
+        border-bottom: none;
+      }
+
+      .result-row span:first-child {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Máy tính cơ bản</h2>
+
+      <div class="form-group">
+        <label for="a">Nhập số a</label>
+        <input type="number" id="a" placeholder="VD: 10" />
+      </div>
+
+      <div class="form-group">
+        <label for="b">Nhập số b</label>
+        <input type="number" id="b" placeholder="VD: 5" />
+      </div>
+
+      <button id="btnTinh">OK</button>
+
+      <div class="result-box">
+        <h3>Kết quả</h3>
+        <div class="result-row">
+          <span>Tổng:</span>
+          <span id="sum">0</span>
+        </div>
+        <div class="result-row">
+          <span>Hiệu:</span>
+          <span id="sub">0</span>
+        </div>
+        <div class="result-row">
+          <span>Nhân:</span>
+          <span id="mul">0</span>
+        </div>
+        <div class="result-row">
+          <span>Chia:</span>
+          <span id="div">0</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("btnTinh").addEventListener("click", function () {
+        const a = Number(document.getElementById("a").value);
+        const b = Number(document.getElementById("b").value);
+
+        if (isNaN(a) || isNaN(b)) {
+          alert("Vui lòng nhập đầy đủ 2 số hợp lệ!");
+          return;
+        }
+
+        document.getElementById("sum").textContent = (a + b).toString();
+        document.getElementById("sub").textContent = (a - b).toString();
+        document.getElementById("mul").textContent = (a * b).toString();
+        document.getElementById("div").textContent =
+          b === 0 ? "Không chia được" : (a / b).toString();
+      });
+    </script>
+  </body>
+</html>
