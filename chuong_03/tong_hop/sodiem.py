@@ -4,6 +4,7 @@ from io import StringIO
 
 from flask import Flask, abort, make_response, redirect, request, url_for
 from markupsafe import escape
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
@@ -363,3 +364,32 @@ def api_student_score(mssv, course):
         "score": score,
         "average": average(scores),
     }, 201 if is_new_score else 200, headers
+
+
+@app.errorhandler(400)
+@app.errorhandler(404)
+@app.errorhandler(405)
+def handle_http_error(error: HTTPException):
+    response = error.get_response()
+    titles = {
+        400: "Dữ liệu không hợp lệ",
+        404: "Không tìm thấy",
+        405: "Phương thức không được hỗ trợ",
+    }
+    status = error.code
+    if status not in titles:
+        raise RuntimeError(f"Unexpected HTTP error status: {status}")
+    title = titles[status]
+    detail = error.description
+
+    if request.path.startswith("/api/"):
+        response.set_data(
+            app.json.dumps({"error": title, "detail": detail})
+        )
+        response.content_type = "application/json; charset=utf-8"
+        return response
+
+    body = f"<p>{escape(detail)}</p>"
+    response.set_data(layout(f"{status} - {title}", body))
+    response.content_type = "text/html; charset=utf-8"
+    return response

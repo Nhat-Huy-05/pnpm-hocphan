@@ -52,6 +52,61 @@ curl.exe -i -X PUT "$B/api/students/23T1020001/scores/PMNM?score=7.5"
 curl.exe -i -X DELETE "$B/api/students/23T1020005/scores/WEB"
 ```
 
+## Phần 3: Xử lý lỗi (Câu 9)
+
+Các lỗi 400, 404 và 405 được xử lý chung:
+
+- URL bắt đầu bằng `/api/` trả JSON theo dạng
+  `{"error": "<tiêu đề>", "detail": "<mô tả>"}`.
+- URL còn lại trả trang lỗi HTML theo khung `layout()`.
+- Phản hồi luôn giữ mã lỗi gốc; lỗi 405 cũng giữ header `Allow` do Flask tạo.
+
+`request` dùng được trong hàm xử lý lỗi dù hàm đó không phải view vì Flask giữ
+request context trong suốt quá trình xử lý một yêu cầu. `request` là một
+`LocalProxy` trỏ đến yêu cầu hiện tại trong context đó; Flask gọi error handler
+trước khi kết thúc context.
+
+## Phần 4: Kiểm thử và nộp bài
+
+Khi server đang chạy tại cổng 8000, có thể chạy các lệnh sau trong PowerShell
+để kiểm tra status, body và header quan trọng:
+
+```powershell
+$B = "http://127.0.0.1:8000"
+$S = "$B/api/students/23T1020005/scores/WEB"
+curl.exe -i "$B/sv/23T1020001"
+curl.exe -i "$B/students/23T1020001/export"
+curl.exe -i "$B/api/students?lop=k47a&min_avg=7"
+curl.exe -i "$B/api/students?min_avg=abc"
+curl.exe -i "$B/api/students/999"
+curl.exe -i -X PUT "$S?score=9"
+curl.exe -i -X PUT "$S?score=7.5"
+curl.exe -i -X PUT "$S?score=11"
+curl.exe -i -X DELETE "$S"
+curl.exe -i -X POST "$B/api/students/23T1020001/scores/PMNM"
+curl.exe -i -X POST "$B/students"
+```
+
+Đối chiếu kết quả:
+
+| Lệnh | Status mong đợi | Nội dung cần kiểm tra |
+| --- | --- | --- |
+| `/sv/23T1020001` | 301 | `Location: /students/23T1020001` |
+| Tải CSV | 200 | `Content-Type: text/csv; charset=utf-8`; file tải tên `diem_23T1020001.csv` |
+| Lọc sinh viên qua API | 200 | JSON chỉ gồm sinh viên K47A có điểm trung bình từ 7 |
+| `min_avg=abc` | 400 | JSON có `error` và `detail` |
+| MSSV API không tồn tại | 404 | JSON có `error` và `detail` |
+| PUT điểm WEB lần đầu | 201 | JSON điểm mới và `Location: /api/students/23T1020005/scores/WEB` |
+| PUT điểm WEB lần tiếp theo | 200 | JSON phản hồi điểm sau cập nhật |
+| PUT điểm 11 | 400 | JSON báo điểm phải từ 0 đến 10 |
+| DELETE điểm WEB | 204 | Body rỗng |
+| POST tới API điểm | 405 | JSON lỗi và header `Allow` |
+| POST tới `/students` | 405 | Trang lỗi HTML, vẫn là status 405 |
+
+Đề yêu cầu ít nhất 4 commit, tương ứng các mốc Phần 0, Phần 1, Phần 2 và
+Phần 3–4. Hãy tự tạo từng commit sau khi kiểm tra xong mốc tương ứng; không
+đưa `.venv/` hoặc `__pycache__/` vào Git.
+
 ## Cài đặt và chạy
 
 Chạy trong PowerShell tại thư mục `chuong_03/tong_hop`:
