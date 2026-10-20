@@ -2,9 +2,15 @@
 
 ## Phần 0: Khởi tạo dự án
 
-Ứng dụng Flask dùng dữ liệu mẫu `STUDENTS` trong `sodiem.py`. Phần này khai
-báo dữ liệu, cấu hình JSON tiếng Việt, các hàm tính điểm trung bình/xếp loại,
-hàm tạo thông tin tổng hợp sinh viên và khung HTML dùng chung.
+Ứng dụng được chia theo chức năng để dễ tìm và chỉnh sửa:
+
+- `student_data.py`: dữ liệu mẫu `STUDENTS`.
+- `student_service.py`: tính điểm trung bình, xếp loại và tổng hợp thông tin sinh viên.
+- `html_routes.py`: các trang HTML, tìm kiếm và xuất CSV.
+- `api_routes.py`: các endpoint API JSON.
+- `sodiem.py`: tạo ứng dụng Flask, đăng ký các route/xử lý lỗi và làm file chạy chính.
+
+Các URL và hành vi của ứng dụng được giữ nguyên.
 
 ## Phần 1: Giao diện web (Câu 1–6)
 
@@ -20,16 +26,16 @@ escape. MSSV không tồn tại ở trang chi tiết hoặc đường dẫn xu�
 
 ## Phần 2: API JSON (Câu 7–8)
 
-| Phương thức | Đường dẫn | Chức năng |
-| --- | --- | --- |
-| GET | `/api/students` | Danh sách sinh viên dạng JSON |
-| GET | `/api/students?lop=K47A` | Lọc theo lớp, không phân biệt hoa thường |
-| GET | `/api/students?min_avg=7` | Lọc điểm trung bình từ 7 trở lên |
-| GET | `/api/students?lop=K47A&min_avg=7` | Kết hợp hai bộ lọc |
-| GET | `/api/students/<mssv>` | Thông tin tổng hợp một sinh viên |
-| GET | `/api/students/<mssv>/scores/<course>` | Đọc điểm học phần |
-| PUT | `/api/students/<mssv>/scores/<course>?score=8.5` | Thêm hoặc cập nhật điểm |
-| DELETE | `/api/students/<mssv>/scores/<course>` | Xóa điểm học phần |
+| Phương thức | Đường dẫn                                        | Chức năng                                |
+| ----------- | ------------------------------------------------ | ---------------------------------------- |
+| GET         | `/api/students`                                  | Danh sách sinh viên dạng JSON            |
+| GET         | `/api/students?lop=K47A`                         | Lọc theo lớp, không phân biệt hoa thường |
+| GET         | `/api/students?min_avg=7`                        | Lọc điểm trung bình từ 7 trở lên         |
+| GET         | `/api/students?lop=K47A&min_avg=7`               | Kết hợp hai bộ lọc                       |
+| GET         | `/api/students/<mssv>`                           | Thông tin tổng hợp một sinh viên         |
+| GET         | `/api/students/<mssv>/scores/<course>`           | Đọc điểm học phần                        |
+| PUT         | `/api/students/<mssv>/scores/<course>?score=8.5` | Thêm hoặc cập nhật điểm                  |
+| DELETE      | `/api/students/<mssv>/scores/<course>`           | Xóa điểm học phần                        |
 
 `min_avg` sai kiểu hoặc không hữu hạn trả 400; khi lọc theo điểm, sinh viên
 chưa có điểm trung bình không được đưa vào kết quả. Mã học phần không phân biệt
@@ -89,19 +95,19 @@ curl.exe -i -X POST "$B/students"
 
 Đối chiếu kết quả:
 
-| Lệnh | Status mong đợi | Nội dung cần kiểm tra |
-| --- | --- | --- |
-| `/sv/23T1020001` | 301 | `Location: /students/23T1020001` |
-| Tải CSV | 200 | `Content-Type: text/csv; charset=utf-8`; file tải tên `diem_23T1020001.csv` |
-| Lọc sinh viên qua API | 200 | JSON chỉ gồm sinh viên K47A có điểm trung bình từ 7 |
-| `min_avg=abc` | 400 | JSON có `error` và `detail` |
-| MSSV API không tồn tại | 404 | JSON có `error` và `detail` |
-| PUT điểm WEB lần đầu | 201 | JSON điểm mới và `Location: /api/students/23T1020005/scores/WEB` |
-| PUT điểm WEB lần tiếp theo | 200 | JSON phản hồi điểm sau cập nhật |
-| PUT điểm 11 | 400 | JSON báo điểm phải từ 0 đến 10 |
-| DELETE điểm WEB | 204 | Body rỗng |
-| POST tới API điểm | 405 | JSON lỗi và header `Allow` |
-| POST tới `/students` | 405 | Trang lỗi HTML, vẫn là status 405 |
+| Lệnh                       | Status mong đợi | Nội dung cần kiểm tra                                                       |
+| -------------------------- | --------------- | --------------------------------------------------------------------------- |
+| `/sv/23T1020001`           | 301             | `Location: /students/23T1020001`                                            |
+| Tải CSV                    | 200             | `Content-Type: text/csv; charset=utf-8`; file tải tên `diem_23T1020001.csv` |
+| Lọc sinh viên qua API      | 200             | JSON chỉ gồm sinh viên K47A có điểm trung bình từ 7                         |
+| `min_avg=abc`              | 400             | JSON có `error` và `detail`                                                 |
+| MSSV API không tồn tại     | 404             | JSON có `error` và `detail`                                                 |
+| PUT điểm WEB lần đầu       | 201             | JSON điểm mới và `Location: /api/students/23T1020005/scores/WEB`            |
+| PUT điểm WEB lần tiếp theo | 200             | JSON phản hồi điểm sau cập nhật                                             |
+| PUT điểm 11                | 400             | JSON báo điểm phải từ 0 đến 10                                              |
+| DELETE điểm WEB            | 204             | Body rỗng                                                                   |
+| POST tới API điểm          | 405             | JSON lỗi và header `Allow`                                                  |
+| POST tới `/students`       | 405             | Trang lỗi HTML, vẫn là status 405                                           |
 
 Đề yêu cầu ít nhất 4 commit, tương ứng các mốc Phần 0, Phần 1, Phần 2 và
 Phần 3–4. Hãy tự tạo từng commit sau khi kiểm tra xong mốc tương ứng; không
@@ -116,6 +122,12 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 flask --app sodiem run --debug --port 8000
+```
+
+Hoặc chạy trực tiếp file chính:
+
+```powershell
+python sodiem.py
 ```
 
 Mở `http://127.0.0.1:8000/` sau khi Flask khởi động. Môi trường ảo `.venv/`
