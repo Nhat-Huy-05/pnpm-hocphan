@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_macros.html" import item_card, pagination %}
+
+{% block title %}Thực đơn{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .menu-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .item-card {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+
+    .het-hang {
+      color: #a00;
+    }
+
+    .pagination ul {
+      display: flex;
+      gap: 0.75rem;
+      list-style: none;
+      padding: 0;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1>Thực đơn ({{ menu_count }} món)</h1>
+
+  <section class="menu-cards" aria-label="Danh sách món">
+    {% for item in menu %}
+      {{ item_card(item) }}
+    {% endfor %}
+  </section>
+
+  {{ pagination(page, pages, "menu.menu") }}
+
+  <section aria-label="Thống kê thực đơn">
+    <p>Giá trung bình: {{ average_price|vnd }}</p>
+    <p>Số món đang có: {{ available_count }}</p>
+  </section>
+{% endblock %}
