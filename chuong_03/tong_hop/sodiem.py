@@ -41,13 +41,10 @@ def create_app():
         app.register_error_handler(status_code, handle_http_error)
     return app
 
-
 app = create_app()
-
 
 def main():
     app.run(debug=True, port=8000)
-
 
 if __name__ == "__main__":
     main()
