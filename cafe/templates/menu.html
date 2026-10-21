@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thực đơn</title>
+  </head>
+  <body>
+    <h1>Thực đơn ({{ menu|length }} món)</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">STT</th>
+          <th scope="col">Tên món</th>
+          <th scope="col">Giá</th>
+          <th scope="col">Tình trạng</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in menu %}
+        <tr{% if not item.available %} class="het-hang"{% endif %}>
+          <td>{{ loop.index }}</td>
+          <td>{{ item.name.title() }}</td>
+          <td>{{ item.price|vnd }}</td>
+          <td>{{ "Còn hàng" if item.available else "Hết hàng" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row" colspan="2">Giá trung bình</th>
+          <td colspan="2">{{ average_price|vnd }}</td>
+        </tr>
+        <tr>
+          <th scope="row" colspan="2">Số món đang có</th>
+          <td colspan="2">{{ available_count }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>
