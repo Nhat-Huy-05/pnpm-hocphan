@@ -1,11 +1,29 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thực đơn</title>
-  </head>
-  <body>
+{% extends "base.html" %}
+
+{% block title %}Thực đơn{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    .het-hang {
+      color: #a00;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
     <h1>Thực đơn ({{ menu|length }} món)</h1>
 
     <table>
@@ -38,5 +56,4 @@
         </tr>
       </tfoot>
     </table>
-  </body>
-</html>
+{% endblock %}

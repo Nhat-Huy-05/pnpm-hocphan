@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Trang chủ{% endblock %} - Sông Hương</title>
+    {% block styles %}
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      nav ul {
+        display: flex;
+        gap: 1rem;
+        list-style: none;
+        padding: 0;
+      }
+
+      footer {
+        border-top: 1px solid #ccc;
+        margin-top: 2rem;
+        padding-top: 1rem;
+      }
+    </style>
+    {% endblock %}
+  </head>
+  <body>
+    <nav aria-label="Điều hướng chính">
+      <ul>
+        <li><a href="{{ url_for('index') }}">Trang chủ</a></li>
+        <li><a href="{{ url_for('menu.menu') }}">Thực đơn</a></li>
+        <li><a href="{{ url_for('contact') }}">Liên hệ</a></li>
+      </ul>
+    </nav>
+    <main>{% block content %}{% endblock %}</main>
+    <footer>
+      <p>&copy; Sông Hương - 12 Lê Lợi, Huế</p>
+    </footer>
+  </body>
+</html>

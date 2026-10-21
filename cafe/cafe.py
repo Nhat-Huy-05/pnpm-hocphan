@@ -16,3 +16,13 @@ def index():
         hour = datetime.now().hour
     is_open = SHOP["open"] <= hour < SHOP["close"]
     return render_template("index.html", shop=SHOP, promotions=PROMOTIONS, hour=hour, is_open=is_open)
+
+
+@app.get("/contact")
+def contact():
+    return render_template("contact.html", shop=SHOP)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template("404.html"), 404

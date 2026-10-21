@@ -1,11 +1,8 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ shop["name"] }}</title>
-  </head>
-  <body>
+{% extends "base.html" %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
     <h1>{{ shop["name"] }}</h1>
     <p>{{ shop["address"] }}</p>
     <p>Giờ mở cửa: {{ shop["open"] }}h - {{ shop["close"] }}h</p>
@@ -26,5 +23,4 @@
     <form action="{{ url_for('menu.menu') }}">
       <button type="submit">Xem thực đơn</button>
     </form>
-  </body>
-</html>
+{% endblock %}
