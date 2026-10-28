@@ -6,44 +6,24 @@
 {% block styles %}
   {{ super() }}
   <style>
-    .menu-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-    }
-
-    .item-card {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-    }
-
-    .het-hang {
-      color: #a00;
-    }
-
-    .pagination ul {
-      display: flex;
-      gap: 0.75rem;
-      list-style: none;
-      padding: 0;
-    }
   </style>
 {% endblock %}
 
 {% block content %}
-  <h1>Thực đơn ({{ menu_count }} món)</h1>
+  <h1 class="page-heading">Thực đơn <span class="badge text-bg-primary">{{ menu_count }} món</span></h1>
 
-  <section class="menu-cards" aria-label="Danh sách món">
+  <section class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3" aria-label="Danh sách món">
     {% for item in menu %}
-      {{ item_card(item) }}
+      <div class="col">{{ item_card(item) }}</div>
     {% endfor %}
   </section>
 
   {{ pagination(page, pages, "menu.menu") }}
 
-  <section aria-label="Thống kê thực đơn">
-    <p>Giá trung bình: {{ average_price|vnd }}</p>
-    <p>Số món đang có: {{ available_count }}</p>
+  <section class="card border-0 shadow-sm mt-4" aria-label="Thống kê thực đơn">
+    <div class="card-body d-flex flex-wrap gap-4">
+      <p class="mb-0"><span class="text-secondary">Giá trung bình:</span> <strong>{{ average_price|vnd }}</strong></p>
+      <p class="mb-0"><span class="text-secondary">Số món đang có:</span> <strong>{{ available_count }}</strong></p>
+    </div>
   </section>
 {% endblock %}

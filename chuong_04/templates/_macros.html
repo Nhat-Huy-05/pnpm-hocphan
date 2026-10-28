@@ -1,29 +1,35 @@
 {% macro item_card(item) %}
-  <article class="item-card{% if not item.available %} het-hang{% endif %}">
-    <h2>{{ item.name.title() }}</h2>
-    <p>Giá: {{ item.price|vnd }}</p>
-    <p>Tình trạng: {{ "Còn hàng" if item.available else "Hết hàng" }}</p>
+  <article class="card h-100 shadow-sm{% if not item.available %} het-hang border-danger-subtle{% endif %}">
+    <div class="card-body">
+      <h2 class="h5 card-title">{{ item.name.title() }}</h2>
+      <p class="fs-5 fw-semibold text-primary mb-2">{{ item.price|vnd }}</p>
+      {% if item.available %}
+      <span class="badge text-bg-success">Còn hàng</span>
+      {% else %}
+      <span class="badge text-bg-danger">Hết hàng</span>
+      {% endif %}
+    </div>
   </article>
 {% endmacro %}
 
 {% macro pagination(page, pages, endpoint) %}
   {% if pages > 1 %}
-    <nav class="pagination" aria-label="Phân trang">
-      <ul>
+    <nav aria-label="Phân trang">
+      <ul class="pagination justify-content-center mt-4">
         {% if page > 1 %}
-          <li><a href="{{ url_for(endpoint, page=page - 1) }}">Trang trước</a></li>
+          <li class="page-item"><a class="page-link" href="{{ url_for(endpoint, page=page - 1) }}">Trang trước</a></li>
         {% endif %}
         {% for page_number in range(1, pages + 1) %}
-          <li>
+          <li class="page-item{% if page_number == page %} active{% endif %}">
             {% if page_number == page %}
-              <span aria-current="page">{{ page_number }}</span>
+              <span class="page-link" aria-current="page">{{ page_number }}</span>
             {% else %}
-              <a href="{{ url_for(endpoint, page=page_number) }}">{{ page_number }}</a>
+              <a class="page-link" href="{{ url_for(endpoint, page=page_number) }}">{{ page_number }}</a>
             {% endif %}
           </li>
         {% endfor %}
         {% if page < pages %}
-          <li><a href="{{ url_for(endpoint, page=page + 1) }}">Trang sau</a></li>
+          <li class="page-item"><a class="page-link" href="{{ url_for(endpoint, page=page + 1) }}">Trang sau</a></li>
         {% endif %}
       </ul>
     </nav>

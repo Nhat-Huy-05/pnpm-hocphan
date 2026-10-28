@@ -3,7 +3,11 @@
 {% block title %}Liên hệ{% endblock %}
 
 {% block content %}
-  <h1>Liên hệ</h1>
-  <p>Địa chỉ: {{ shop["address"] }}</p>
-  <p>Điện thoại: Vui lòng liên hệ trực tiếp tại quán.</p>
+  <h1 class="page-heading">Liên hệ</h1>
+  <div class="card border-0 shadow-sm" style="max-width: 36rem">
+    <div class="card-body p-4">
+      <p>Địa chỉ: {{ shop["address"] }}</p>
+      <p class="mb-0">Điện thoại: Vui lòng liên hệ trực tiếp tại quán.</p>
+    </div>
+  </div>
 {% endblock %}

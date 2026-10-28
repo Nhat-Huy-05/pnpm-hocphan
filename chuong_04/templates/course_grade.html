@@ -5,62 +5,42 @@
 {% block styles %}
   {{ super() }}
   <style>
-    .grade-form {
-      display: grid;
-      gap: 0.75rem;
-      max-width: 24rem;
-      margin-top: 1.5rem;
-    }
-
-    .grade-form label {
-      display: grid;
-      gap: 0.25rem;
-    }
-
-    .grade-error {
-      color: #a00;
-    }
   </style>
 {% endblock %}
 
 {% block content %}
-  <h1>Tính điểm học phần</h1>
-  <p>Chuyên cần (10%), giữa kỳ (30%), cuối kỳ (60%). Điểm mỗi phần từ 0 đến 10.</p>
-  <p>Điểm chữ: từ 8,5 là A; từ 7 là B; từ 5,5 là C; từ 4 là D; dưới 4 là F. Điểm cuối kỳ dưới 1 là F (điểm liệt).</p>
+  <h1 class="page-heading">Tính điểm học phần</h1>
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <p class="mb-2">Chuyên cần (10%), giữa kỳ (30%), cuối kỳ (60%). Điểm mỗi phần từ 0 đến 10.</p>
+      <p class="text-secondary small mb-0">Điểm chữ: từ 8,5 là A; từ 7 là B; từ 5,5 là C; từ 4 là D; dưới 4 là F. Điểm cuối kỳ dưới 1 là F (điểm liệt).</p>
+    </div>
+  </div>
 
-  <form class="grade-form" method="post" action="{{ url_for('course_grade') }}">
-    <label for="cc">
-      Điểm chuyên cần (10%)
-      <input id="cc" name="cc" type="text" inputmode="decimal" value="{{ values.cc }}" required />
-    </label>
-    {% if errors.cc %}
-    <p class="grade-error" role="alert">{{ errors.cc }}</p>
-    {% endif %}
-
-    <label for="gk">
-      Điểm giữa kỳ (30%)
-      <input id="gk" name="gk" type="text" inputmode="decimal" value="{{ values.gk }}" required />
-    </label>
-    {% if errors.gk %}
-    <p class="grade-error" role="alert">{{ errors.gk }}</p>
-    {% endif %}
-
-    <label for="ck">
-      Điểm cuối kỳ (60%)
-      <input id="ck" name="ck" type="text" inputmode="decimal" value="{{ values.ck }}" required />
-    </label>
-    {% if errors.ck %}
-    <p class="grade-error" role="alert">{{ errors.ck }}</p>
-    {% endif %}
-
-    <button type="submit">Tính điểm</button>
-  </form>
+  <div class="card border-0 shadow-sm" style="max-width: 36rem">
+    <div class="card-body p-4">
+      <form method="post" action="{{ url_for('course_grade') }}" class="vstack gap-3">
+        {% for field, label in [("cc", "Điểm chuyên cần (10%)"), ("gk", "Điểm giữa kỳ (30%)"), ("ck", "Điểm cuối kỳ (60%)")] %}
+        <div>
+          <label for="{{ field }}" class="form-label">{{ label }}</label>
+          <input id="{{ field }}" name="{{ field }}" class="form-control" type="text" inputmode="decimal" value="{{ values[field] }}" required />
+          {% if errors[field] %}
+          <div class="invalid-feedback d-block" role="alert">{{ errors[field] }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary align-self-start">Tính điểm</button>
+      </form>
+    </div>
+  </div>
 
   {% if final_score is not none %}
-  <section aria-live="polite">
-    <h2>Kết quả</h2>
-    <p>Điểm học phần: {{ final_score }}</p>
-    <p>Điểm chữ: {{ letter_grade }}</p>
+  <section class="card border-0 shadow-sm mt-4" aria-live="polite">
+    <div class="card-body">
+      <h2 class="h5">Kết quả</h2>
+      <p class="mb-2">Điểm học phần: <strong>{{ final_score }}</strong></p>
+      <p class="mb-0">Điểm chữ: <span class="badge text-bg-primary">{{ letter_grade }}</span></p>
+    </div>
   </section>
   {% endif %}
 {% endblock %}

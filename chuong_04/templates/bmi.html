@@ -5,71 +5,45 @@
 {% block styles %}
   {{ super() }}
   <style>
-    .bmi-form {
-      display: grid;
-      gap: 0.75rem;
-      max-width: 24rem;
-      margin-top: 1.5rem;
-    }
-
-    .bmi-form label {
-      display: grid;
-      gap: 0.25rem;
-    }
-
-    .bmi-error {
-      color: #a00;
-    }
-
     .bmi-result {
-      padding: 0.75rem;
-      border-radius: 0.25rem;
-    }
-
-    .bmi-result.green {
-      background: #e4f4e4;
-    }
-
-    .bmi-result.yellow {
-      background: #fff4cc;
-    }
-
-    .bmi-result.red {
-      background: #f8dddd;
+      max-width: 32rem;
     }
   </style>
 {% endblock %}
 
 {% block content %}
-  <h1>Tính chỉ số BMI</h1>
-  <p>Nhập chiều cao và cân nặng. Chiều cao hợp lệ từ 50 đến 250 cm, cân nặng từ 10 đến 300 kg.</p>
+  <h1 class="page-heading">Tính chỉ số BMI</h1>
+  <p class="text-secondary">Nhập chiều cao và cân nặng. Chiều cao hợp lệ từ 50 đến 250 cm, cân nặng từ 10 đến 300 kg.</p>
+  <div class="card border-0 shadow-sm" style="max-width: 32rem">
+    <div class="card-body p-4">
+      <form method="post" action="{{ url_for('bmi') }}" class="vstack gap-3">
+        <div>
+          <label for="height" class="form-label">Chiều cao (cm)</label>
+          <input id="height" name="height" class="form-control" type="text" inputmode="decimal" value="{{ values.height }}" required />
+          {% if errors.height %}
+          <div class="invalid-feedback d-block" role="alert">{{ errors.height }}</div>
+          {% endif %}
+        </div>
 
-  <form class="bmi-form" method="post" action="{{ url_for('bmi') }}">
-    <label for="height">
-      Chiều cao (cm)
-      <input id="height" name="height" type="text" inputmode="decimal" value="{{ values.height }}" required />
-    </label>
-    {% if errors.height %}
-    <p class="bmi-error" role="alert">{{ errors.height }}</p>
-    {% endif %}
+        <div>
+          <label for="weight" class="form-label">Cân nặng (kg)</label>
+          <input id="weight" name="weight" class="form-control" type="text" inputmode="decimal" value="{{ values.weight }}" required />
+          {% if errors.weight %}
+          <div class="invalid-feedback d-block" role="alert">{{ errors.weight }}</div>
+          {% endif %}
+        </div>
 
-    <label for="weight">
-      Cân nặng (kg)
-      <input id="weight" name="weight" type="text" inputmode="decimal" value="{{ values.weight }}" required />
-    </label>
-    {% if errors.weight %}
-    <p class="bmi-error" role="alert">{{ errors.weight }}</p>
-    {% endif %}
-
-    <button type="submit">Tính BMI</button>
-  </form>
+        <button type="submit" class="btn btn-primary align-self-start">Tính BMI</button>
+      </form>
+    </div>
+  </div>
 
   {% if bmi_value is not none %}
-  <section class="bmi-result {{ category_color }}" aria-live="polite">
-    <h2>Kết quả</h2>
-    <p>BMI: {{ bmi_value }}</p>
-    <p>Phân loại: {{ category }}</p>
-    <p>Cân nặng nên có: {{ weight_range[0] }}–{{ weight_range[1] }} kg</p>
+  <section class="alert alert-{{ 'success' if category_color == 'green' else 'danger' if category_color == 'red' else 'warning' }} bmi-result mt-4" aria-live="polite">
+    <h2 class="h5">Kết quả</h2>
+    <p class="mb-2">BMI: <strong>{{ bmi_value }}</strong></p>
+    <p class="mb-2">Phân loại: <strong>{{ category }}</strong></p>
+    <p class="mb-0">Cân nặng nên có: {{ weight_range[0] }}–{{ weight_range[1] }} kg</p>
   </section>
   {% endif %}
 {% endblock %}
