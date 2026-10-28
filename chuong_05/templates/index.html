@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+  <section class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4 p-md-5">
+      <h1 class="display-6 fw-semibold">Bộ công cụ học tập</h1>
+      <p class="lead text-secondary mb-0">Chọn một công cụ để bắt đầu.</p>
+    </div>
+  </section>
+
+  <div class="row row-cols-1 row-cols-md-3 g-3">
+    <div class="col">
+      <article class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 card-title">Tính toán</h2>
+          <p class="card-text text-secondary">Thực hiện phép cộng, trừ, nhân và chia.</p>
+          <a class="btn btn-outline-primary" href="{{ url_for('calculator') }}">Mở máy tính</a>
+        </div>
+      </article>
+    </div>
+    <div class="col">
+      <article class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 card-title">Tính điểm học phần</h2>
+          <p class="card-text text-secondary">Tính điểm tổng kết và điểm chữ theo trọng số.</p>
+          <a class="btn btn-outline-primary" href="{{ url_for('course_grade') }}">Tính điểm</a>
+        </div>
+      </article>
+    </div>
+    <div class="col">
+      <article class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 card-title">Tính BMI</h2>
+          <p class="card-text text-secondary">Tính chỉ số BMI và xem phân loại.</p>
+          <a class="btn btn-outline-primary" href="{{ url_for('bmi') }}">Tính BMI</a>
+        </div>
+      </article>
+    </div>
+  </div>
+{% endblock %}

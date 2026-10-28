@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Tính toán{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Máy tính cơ bản</h1>
+  <div class="card border-0 shadow-sm" style="max-width: 32rem">
+    <div class="card-body p-4">
+      <form method="post" action="{{ url_for('calculator') }}" class="vstack gap-3">
+        <div>
+          <label for="a" class="form-label">Số thứ nhất</label>
+          <input id="a" name="a" class="form-control" type="text" inputmode="decimal" value="{{ values.a }}" required />
+          {% if errors.a %}<div class="invalid-feedback d-block" role="alert">{{ errors.a }}</div>{% endif %}
+        </div>
+        <div>
+          <label for="op" class="form-label">Phép toán</label>
+          <select id="op" name="op" class="form-select">
+            <option value="+" {% if values.op == "+" %}selected{% endif %}>Cộng (+)</option>
+            <option value="-" {% if values.op == "-" %}selected{% endif %}>Trừ (-)</option>
+            <option value="*" {% if values.op == "*" %}selected{% endif %}>Nhân (*)</option>
+            <option value="/" {% if values.op == "/" %}selected{% endif %}>Chia (/)</option>
+          </select>
+          {% if errors.op %}<div class="invalid-feedback d-block" role="alert">{{ errors.op }}</div>{% endif %}
+        </div>
+        <div>
+          <label for="b" class="form-label">Số thứ hai</label>
+          <input id="b" name="b" class="form-control" type="text" inputmode="decimal" value="{{ values.b }}" required />
+          {% if errors.b %}<div class="invalid-feedback d-block" role="alert">{{ errors.b }}</div>{% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary align-self-start">Tính</button>
+      </form>
+    </div>
+  </div>
+  {% if result is not none %}
+  <div class="alert alert-primary mt-4" role="status">
+    Kết quả: <strong>{{ values.a }} {{ values.op }} {{ values.b }} = {{ result }}</strong>
+  </div>
+  {% endif %}
+{% endblock %}

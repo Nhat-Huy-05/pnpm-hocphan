@@ -1,0 +1,10 @@
+<nav class="navbar navbar-expand bg-white border-bottom" aria-label="Điều hướng chính">
+  <div class="container flex-wrap">
+    <a class="navbar-brand fw-semibold text-primary" href="{{ url_for('index') }}">Bộ công cụ học tập</a>
+    <ul class="navbar-nav flex-row flex-wrap gap-2 gap-md-3">
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('calculator') }}">Tính toán</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('course_grade') }}">Tính điểm học phần</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('bmi') }}">Tính BMI</a></li>
+    </ul>
+  </div>
+</nav>

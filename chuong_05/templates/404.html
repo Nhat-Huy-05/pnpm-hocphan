@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Không tìm thấy trang{% endblock %}
+
+{% block content %}
+  <div class="text-center py-5">
+    <p class="display-1 fw-semibold text-secondary">404</p>
+    <h1 class="h3">Không tìm thấy trang</h1>
+    <p class="text-secondary">Địa chỉ bạn truy cập không tồn tại.</p>
+    <a class="btn btn-primary mt-2" href="{{ url_for('index') }}">Về trang chủ</a>
+  </div>
+{% endblock %}
