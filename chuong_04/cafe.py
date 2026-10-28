@@ -15,7 +15,58 @@ def index():
     if hour is None:
         hour = datetime.now().hour
     is_open = SHOP["open"] <= hour < SHOP["close"]
-    return render_template("index.html", shop=SHOP, promotions=PROMOTIONS, hour=hour, is_open=is_open)
+    return render_template(
+        "index.html",
+        shop=SHOP,
+        promotions=PROMOTIONS,
+        hour=hour,
+        is_open=is_open,
+    )
+
+
+@app.route("/calculator", methods=["GET", "POST"])
+def calculator():
+    values = {
+        "a": "",
+        "op": "+",
+        "b": "",
+    }
+    errors = {}
+    result = None
+
+    if request.method == "POST":
+        values["a"] = request.form.get("a", "").strip()
+        values["op"] = request.form.get("op", "")
+        values["b"] = request.form.get("b", "").strip()
+
+        numbers = {}
+        for field in ("a", "b"):
+            try:
+                numbers[field] = float(values[field].replace(",", "."))
+            except ValueError:
+                errors[field] = "Vui lòng nhập một số."
+
+        operations = {
+            "+": lambda a, b: a + b,
+            "-": lambda a, b: a - b,
+            "*": lambda a, b: a * b,
+            "/": lambda a, b: a / b,
+        }
+        operation = operations.get(values["op"])
+        if operation is None:
+            errors["op"] = "Phép toán không hợp lệ."
+        elif not errors:
+            if values["op"] == "/" and numbers["b"] == 0:
+                errors["b"] = "Không thể chia cho 0."
+            else:
+                result = operation(numbers["a"], numbers["b"])
+
+    return render_template(
+        "calculator.html",
+        values=values,
+        errors=errors,
+        result=result,
+    )
 
 
 @app.get("/contact")

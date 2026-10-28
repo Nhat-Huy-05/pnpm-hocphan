@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Tính toán{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .calculator {
+      display: grid;
+      gap: 0.75rem;
+      max-width: 24rem;
+      margin-top: 1.5rem;
+    }
+
+    .calculator label {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .error {
+      color: #a00;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1>Máy tính cơ bản</h1>
+  <form class="calculator" method="post" action="{{ url_for('calculator') }}">
+    <label for="a">
+      Số thứ nhất
+      <input
+        id="a"
+        name="a"
+        type="text"
+        inputmode="decimal"
+        value="{{ values.a }}"
+        required
+        aria-describedby="a-error"
+      />
+    </label>
+    {% if errors.a %}
+    <p id="a-error" class="error" role="alert">{{ errors.a }}</p>
+    {% endif %}
+
+    <label for="op">
+      Phép toán
+      <select id="op" name="op">
+        <option value="+" {% if values.op == "+" %}selected{% endif %}>+</option>
+        <option value="-" {% if values.op == "-" %}selected{% endif %}>-</option>
+        <option value="*" {% if values.op == "*" %}selected{% endif %}>*</option>
+        <option value="/" {% if values.op == "/" %}selected{% endif %}>/</option>
+      </select>
+    </label>
+    {% if errors.op %}
+    <p class="error" role="alert">{{ errors.op }}</p>
+    {% endif %}
+
+    <label for="b">
+      Số thứ hai
+      <input
+        id="b"
+        name="b"
+        type="text"
+        inputmode="decimal"
+        value="{{ values.b }}"
+        required
+        aria-describedby="b-error"
+      />
+    </label>
+    {% if errors.b %}
+    <p id="b-error" class="error" role="alert">{{ errors.b }}</p>
+    {% endif %}
+
+    <button type="submit">Tính</button>
+  </form>
+
+  {% if result is not none %}
+  <p role="status">Kết quả: {{ values.a }} {{ values.op }} {{ values.b }} = {{ result }}</p>
+  {% endif %}
+{% endblock %}
