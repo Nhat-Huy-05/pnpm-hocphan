@@ -132,6 +132,81 @@ def course_grade():
     )
 
 
+@app.route("/bmi", methods=["GET", "POST"])
+def bmi():
+    values = {"height": "", "weight": ""}
+    errors = {}
+    bmi_value = None
+    category = None
+    weight_range = None
+
+    if request.method == "POST":
+        values["height"] = request.form.get("height", "").strip()
+        values["weight"] = request.form.get("weight", "").strip()
+        numbers = {}
+
+        for field in ("height", "weight"):
+            try:
+                number = Decimal(values[field].replace(",", "."))
+            except InvalidOperation:
+                errors[field] = "Vui lòng nhập một số."
+                continue
+
+            minimum, maximum = (
+                (Decimal("50"), Decimal("250"))
+                if field == "height"
+                else (Decimal("10"), Decimal("300"))
+            )
+            if not number.is_finite() or not minimum <= number <= maximum:
+                if field == "height":
+                    errors[field] = "Chiều cao phải từ 50 đến 250 cm."
+                else:
+                    errors[field] = "Cân nặng phải từ 10 đến 300 kg."
+            else:
+                numbers[field] = number
+
+        if not errors:
+            height_m = numbers["height"] / Decimal("100")
+            raw_bmi = numbers["weight"] / (height_m * height_m)
+            bmi_value = raw_bmi.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+
+            if raw_bmi < Decimal("18.5"):
+                category = "Thiếu cân"
+                category_color = "yellow"
+            elif raw_bmi < Decimal("23"):
+                category = "Bình thường"
+                category_color = "green"
+            elif raw_bmi < Decimal("25"):
+                category = "Thừa cân"
+                category_color = "yellow"
+            else:
+                category = "Béo phì"
+                category_color = "red"
+
+            weight_range = (
+                (Decimal("18.5") * height_m * height_m).quantize(
+                    Decimal("0.1"), rounding=ROUND_HALF_UP
+                ),
+                (Decimal("22.9") * height_m * height_m).quantize(
+                    Decimal("0.1"), rounding=ROUND_HALF_UP
+                ),
+            )
+        else:
+            category_color = None
+    else:
+        category_color = None
+
+    return render_template(
+        "bmi.html",
+        values=values,
+        errors=errors,
+        bmi_value=bmi_value,
+        category=category,
+        category_color=category_color,
+        weight_range=weight_range,
+    )
+
+
 @app.get("/contact")
 def contact():
     return render_template("contact.html", shop=SHOP)
