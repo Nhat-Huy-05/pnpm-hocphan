@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Tính điểm học phần{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .grade-form {
+      display: grid;
+      gap: 0.75rem;
+      max-width: 24rem;
+      margin-top: 1.5rem;
+    }
+
+    .grade-form label {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .grade-error {
+      color: #a00;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1>Tính điểm học phần</h1>
+  <p>Chuyên cần (10%), giữa kỳ (30%), cuối kỳ (60%). Điểm mỗi phần từ 0 đến 10.</p>
+  <p>Điểm chữ: từ 8,5 là A; từ 7 là B; từ 5,5 là C; từ 4 là D; dưới 4 là F. Điểm cuối kỳ dưới 1 là F (điểm liệt).</p>
+
+  <form class="grade-form" method="post" action="{{ url_for('course_grade') }}">
+    <label for="cc">
+      Điểm chuyên cần (10%)
+      <input id="cc" name="cc" type="text" inputmode="decimal" value="{{ values.cc }}" required />
+    </label>
+    {% if errors.cc %}
+    <p class="grade-error" role="alert">{{ errors.cc }}</p>
+    {% endif %}
+
+    <label for="gk">
+      Điểm giữa kỳ (30%)
+      <input id="gk" name="gk" type="text" inputmode="decimal" value="{{ values.gk }}" required />
+    </label>
+    {% if errors.gk %}
+    <p class="grade-error" role="alert">{{ errors.gk }}</p>
+    {% endif %}
+
+    <label for="ck">
+      Điểm cuối kỳ (60%)
+      <input id="ck" name="ck" type="text" inputmode="decimal" value="{{ values.ck }}" required />
+    </label>
+    {% if errors.ck %}
+    <p class="grade-error" role="alert">{{ errors.ck }}</p>
+    {% endif %}
+
+    <button type="submit">Tính điểm</button>
+  </form>
+
+  {% if final_score is not none %}
+  <section aria-live="polite">
+    <h2>Kết quả</h2>
+    <p>Điểm học phần: {{ final_score }}</p>
+    <p>Điểm chữ: {{ letter_grade }}</p>
+  </section>
+  {% endif %}
+{% endblock %}
