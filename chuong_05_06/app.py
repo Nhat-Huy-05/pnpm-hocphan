@@ -1,8 +1,95 @@
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
-from flask import Flask, render_template, request
+from flask import Flask, Response, render_template, request
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import String, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///qlsv.db"
+db.init_app(app)
+
+
+class Student(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    mssv: Mapped[str] = mapped_column(String(10), unique=True)
+    name: Mapped[str] = mapped_column(String(100))
+    gpa: Mapped[float] = mapped_column(default=0.0)
+
+    def __repr__(self):
+        return f"<Student {self.mssv} {self.name}>"
+
+with app.app_context():
+    db.create_all()
+
+@app.get("/them-bau")
+@app.get("/them-mau")
+def seed_students():
+    total = db.session.scalar(
+        db.select(func.count()).select_from(Student)
+    )
+
+    if total:
+        return f"Bảng đã có {total} sinh viên, không thêm nữa."
+
+    students = [
+        Student(mssv="23T1020001", name="Nguyen Van An", gpa=8.2),
+        Student(mssv="23T1020002", name="Tran Thi Binh", gpa=7.6),
+        Student(mssv="23T1020003", name="Le Van Cuong", gpa=6.8),
+        Student(mssv="23T1020004", name="Pham Thi Dung", gpa=9.0),
+        Student(mssv="23T1020005", name="Hoang Thu Ha", gpa=7.4),
+    ]
+
+    db.session.add_all(students)
+    db.session.commit()
+    return f"Đã thêm {len(students)} sinh viên."
+
+@app.get("/thu-truy-van")
+def try_queries():
+    count = db.session.scalar(db.select(func.count(Student.id)))
+    if not count:
+        return Response(
+            "Chưa có dữ liệu, hãy mở /them-bau trước.",
+            mimetype="text/plain",
+        )
+
+    lines = []
+    lines.append(f"1. get(3): {db.session.get(Student, 3)}")
+    lines.append(f"2. get(99): {db.session.get(Student, 99)}")
+
+    everyone = db.session.execute(
+        db.select(Student)).scalars().all()
+    lines.append(f"3. Tất cả: {len(everyone)} sinh viên")
+
+    stmt = (db.select(Student)
+            .where(Student.gpa >= 8)
+            .order_by(Student.gpa.desc()))
+    good = db.session.execute(stmt).scalars().all()
+    lines.append(f"4. Điểm >= 8: {good}")
+
+    binh = db.session.scalar(db.select(Student)
+                             .filter_by(mssv="23T1020002"))
+    lines.append(f"5. MSSV 23T1020002: {binh}")
+
+    avg = db.session.scalar(db.select(func.avg(Student.gpa)))
+    lines.append(f"6. Số SV: {count}, điểm TB: {avg:.2f}")
+
+    return Response("\n".join(lines), mimetype="text/plain")
+
+
+@app.get("/sinh-vien")
+def student_list():
+    students = db.session.execute(
+        db.select(Student).order_by(Student.id)
+    ).scalars().all()
+    return render_template("students.html", students=students)
 
 
 def parse_decimal(value):

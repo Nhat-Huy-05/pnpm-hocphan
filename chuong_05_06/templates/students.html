@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách sinh viên{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="mb-0">Danh sách sinh viên</h1>
+    <a class="btn btn-outline-primary" href="{{ url_for('try_queries') }}">Thử truy vấn</a>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">STT</th>
+            <th scope="col">MSSV</th>
+            <th scope="col">Họ tên</th>
+            <th scope="col" class="text-end">Điểm GPA</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ student.mssv }}</td>
+            <td>{{ student.name }}</td>
+            <td class="text-end">{{ "%.2f"|format(student.gpa) }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="4" class="text-center text-secondary py-4">
+              Chưa có sinh viên. Hãy thêm dữ liệu mẫu trước.
+              <a href="{{ url_for('seed_students') }}">Thêm 5 sinh viên mẫu</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
