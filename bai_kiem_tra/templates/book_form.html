@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Sửa thông tin sách" if book else "Thêm sách" }}{% endblock %}
+
+{% block content %}
+  <div class="mb-4">
+    <a class="small text-decoration-none" href="{{ url_for('book_list') }}">← Quay lại danh sách sách</a>
+    <h1 class="page-heading h2 fw-bold mt-3 mb-1">{{ "Cập nhật thông tin sách" if book else "Thêm sách mới" }}</h1>
+    <p class="text-secondary mb-0">Điền thông tin và chọn danh mục phù hợp.</p>
+  </div>
+  <section class="card shadow-sm">
+    <div class="card-body p-4 p-md-5">
+      <form method="post" class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label fw-semibold" for="title">Tên sách <span class="text-danger">*</span></label>
+          <input class="form-control" id="title" name="title" maxlength="200" value="{{ values.title }}" required autofocus placeholder="Nhập tên sách" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label fw-semibold" for="author">Tác giả <span class="text-danger">*</span></label>
+          <input class="form-control" id="author" name="author" maxlength="120" value="{{ values.author }}" required placeholder="Nhập tên tác giả" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label fw-semibold" for="category_id">Danh mục <span class="text-danger">*</span></label>
+          <select class="form-select" id="category_id" name="category_id" required>
+            <option value="">Chọn danh mục</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}" {% if values.category_id == category.id|string %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label fw-semibold" for="isbn">ISBN</label>
+          <input class="form-control" id="isbn" name="isbn" maxlength="20" value="{{ values.isbn }}" placeholder="Ví dụ: 978-604-..." />
+          <div class="form-text">Không bắt buộc, nhưng nếu nhập thì phải là duy nhất.</div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label fw-semibold" for="published_year">Năm xuất bản</label>
+          <input class="form-control" id="published_year" name="published_year" type="number" min="1000" max="{{ current_year }}" value="{{ values.published_year }}" placeholder="{{ current_year }}" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label fw-semibold" for="quantity">Số lượng <span class="text-danger">*</span></label>
+          <input class="form-control" id="quantity" name="quantity" type="number" min="0" value="{{ values.quantity }}" required />
+        </div>
+        <div class="col-12 d-flex gap-2 pt-2">
+          <button class="btn btn-primary px-4" type="submit">Lưu thông tin</button>
+          <a class="btn btn-light border px-4" href="{{ url_for('book_list') }}">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

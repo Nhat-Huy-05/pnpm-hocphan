@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Sửa danh mục" if category else "Thêm danh mục" }}{% endblock %}
+
+{% block content %}
+  <div class="mb-4">
+    <a class="small text-decoration-none" href="{{ url_for('category_list') }}">← Quay lại danh mục</a>
+    <h1 class="page-heading h2 fw-bold mt-3 mb-1">{{ "Cập nhật danh mục" if category else "Tạo danh mục mới" }}</h1>
+    <p class="text-secondary mb-0">Thông tin danh mục giúp phân loại các đầu sách.</p>
+  </div>
+  <section class="card shadow-sm">
+    <div class="card-body p-4 p-md-5">
+      <form method="post" class="row g-3">
+        <div class="col-12">
+          <label class="form-label fw-semibold" for="name">Tên danh mục <span class="text-danger">*</span></label>
+          <input class="form-control" id="name" name="name" maxlength="100" value="{{ values.name }}" required autofocus placeholder="Ví dụ: Văn học" />
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold" for="description">Mô tả</label>
+          <textarea class="form-control" id="description" name="description" maxlength="500" rows="4" placeholder="Mô tả ngắn về danh mục">{{ values.description }}</textarea>
+        </div>
+        <div class="col-12 d-flex gap-2 pt-2">
+          <button class="btn btn-primary px-4" type="submit">Lưu danh mục</button>
+          <a class="btn btn-light border px-4" href="{{ url_for('category_list') }}">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

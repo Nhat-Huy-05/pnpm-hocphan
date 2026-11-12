@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Không tìm thấy{% endblock %}
+
+{% block content %}
+  <section class="card border-0 shadow-sm text-center mx-auto" style="max-width: 34rem">
+    <div class="card-body p-5">
+      <p class="display-3 fw-bold text-primary mb-2">404</p>
+      <h1 class="h4 fw-bold">Không tìm thấy nội dung</h1>
+      <p class="text-secondary">Trang hoặc dữ liệu bạn yêu cầu không tồn tại.</p>
+      <a class="btn btn-primary" href="{{ url_for('dashboard') }}">Về tổng quan</a>
+    </div>
+  </section>
+{% endblock %}

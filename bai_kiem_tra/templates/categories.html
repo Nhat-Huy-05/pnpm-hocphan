@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Danh mục sách{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <p class="text-primary fw-semibold text-uppercase small mb-2">Tổ chức thư viện</p>
+      <h1 class="page-heading h2 fw-bold mb-1">Danh mục sách</h1>
+      <p class="text-secondary mb-0">Phân loại sách để dễ quản lý và tra cứu.</p>
+    </div>
+    <a class="btn btn-primary px-3" href="{{ url_for('category_create') }}">+ Thêm danh mục</a>
+  </div>
+
+  <section class="card shadow-sm overflow-hidden">
+    {% if categories %}
+      <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+          <thead><tr><th>Danh mục</th><th>Mô tả</th><th class="text-center">Số đầu sách</th><th class="text-end">Thao tác</th></tr></thead>
+          <tbody>
+            {% for category in categories %}
+            <tr>
+              <td class="fw-semibold">{{ category.name }}</td>
+              <td class="text-secondary">{{ category.description or "Chưa có mô tả" }}</td>
+              <td class="text-center"><span class="badge rounded-pill text-bg-light border">{{ category.books|length }}</span></td>
+              <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('category_edit', category_id=category.id) }}">Sửa</a>
+                <form class="d-inline" method="post" action="{{ url_for('category_delete', category_id=category.id) }}" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?')">
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Xóa</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state text-center">
+        <span class="stat-icon mb-3">D</span>
+        <h2 class="h5 fw-bold">Chưa có danh mục</h2>
+        <p class="text-secondary">Tạo danh mục để bắt đầu sắp xếp các đầu sách.</p>
+        <a class="btn btn-primary" href="{{ url_for('category_create') }}">Tạo danh mục</a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
