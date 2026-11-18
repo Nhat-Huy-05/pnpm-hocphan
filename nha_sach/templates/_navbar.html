@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-lg shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('books') }}">
+      📖 Nhà sách Sông Hương
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('books') }}">Sách</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="{{ url_for('cart') }}">
+            🛒 Giỏ hàng
+            {% set qty = cart_total_qty() %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark badge-cart">
+              {{ qty }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

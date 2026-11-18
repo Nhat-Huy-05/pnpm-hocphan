@@ -1,0 +1,141 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Tổng quan – Quản trị{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">▣ Tổng quan</h4>
+
+{# ── 4 thẻ thống kê ── #}
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card text-bg-primary shadow-sm h-100">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ book_count }}</div>
+        <div>Đầu sách</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card text-bg-warning shadow-sm h-100">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ pending_count }}</div>
+        <div>Đơn chờ xác nhận</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card text-bg-success shadow-sm h-100">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ "{:,.0f}".format(monthly_revenue) }} đ</div>
+        <div>Doanh thu tháng này</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card text-bg-danger shadow-sm h-100">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ low_stock_count }}</div>
+        <div>Sắp hết hàng (≤ 5)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  {# ── Đơn hàng mới nhất ── #}
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">Đơn hàng mới nhất</span>
+        <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-outline-primary">Xem tất cả →</a>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Mã</th>
+              <th>Khách hàng</th>
+              <th class="text-end">Tổng tiền</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in recent_orders %}
+            <tr style="cursor:pointer" onclick="location.href='{{ url_for('admin_order_detail', order_id=o.id) }}'">
+              <td>#{{ o.id }}</td>
+              <td>{{ o.customer_name }}</td>
+              <td class="text-end">{{ "{:,.0f}".format(o.total) }} đ</td>
+              <td>
+                <span class="badge bg-{{ STATUS_COLORS.get(o.status, 'secondary') }}">{{ o.status }}</span>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">Chưa có đơn hàng.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {# ── Sắp hết hàng ── #}
+  <div class="col-lg-5">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold text-danger">⚠ Sắp hết hàng (≤ 5)</span>
+        <a href="{{ url_for('admin_books', stock='low') }}" class="btn btn-sm btn-outline-danger">Nhập thêm sách</a>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            {% for book in low_stock_books %}
+            <tr>
+              <td>
+                <a href="{{ url_for('admin_book_edit', book_id=book.id) }}" class="text-decoration-none">
+                  {{ book.title }}
+                </a>
+              </td>
+              <td class="text-end {% if book.stock == 0 %}text-danger fw-bold{% else %}text-warning fw-semibold{% endif %}">
+                {{ book.stock }}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td class="text-muted py-3">Không có sách sắp hết.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {# ── Biểu đồ doanh thu 7 ngày ── #}
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">📊 Đơn hoàn tất 7 ngày</div>
+      <div class="card-body">
+        <canvas id="revenueChart" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const ctx = document.getElementById('revenueChart');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ chart_labels | tojson }},
+      datasets: [{
+        label: 'Số đơn hoàn tất',
+        data: {{ chart_data | tojson }},
+        backgroundColor: 'rgba(13,110,253,.65)',
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+</script>
+{% endblock %}

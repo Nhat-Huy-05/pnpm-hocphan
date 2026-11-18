@@ -1,0 +1,93 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}{{ 'Sửa sách' if book else 'Thêm sách' }} – Quản trị{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin_books') }}">Sách</a></li>
+    <li class="breadcrumb-item active">{{ 'Sửa – ' + book.title if book else 'Thêm mới' }}</li>
+  </ol>
+</nav>
+
+<div class="card shadow-sm" style="max-width:680px">
+  <div class="card-header fw-semibold">
+    {{ '✏ Sửa sách: ' + book.title if book else '+ Thêm sách mới' }}
+  </div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {{ form.hidden_tag() }}
+
+      {# Tên sách #}
+      <div class="mb-3">
+        {{ form.title.label(class="form-label fw-semibold") }} <span class="text-danger">*</span>
+        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+        {% for e in form.title.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+
+      {# Tác giả #}
+      <div class="mb-3">
+        {{ form.author.label(class="form-label fw-semibold") }} <span class="text-danger">*</span>
+        {{ form.author(class="form-control" + (" is-invalid" if form.author.errors else "")) }}
+        {% for e in form.author.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.publisher.label(class="form-label fw-semibold") }}
+          {{ form.publisher(class="form-control") }}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.year.label(class="form-label fw-semibold") }}
+          {{ form.year(class="form-control" + (" is-invalid" if form.year.errors else ""), placeholder="2024") }}
+          {% for e in form.year.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      {# Danh mục #}
+      <div class="mb-3">
+        {{ form.category_id.label(class="form-label fw-semibold") }}
+        {{ form.category_id(class="form-select") }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.price.label(class="form-label fw-semibold") }} <span class="text-danger">*</span>
+          {{ form.price(class="form-control" + (" is-invalid" if form.price.errors else ""), placeholder="95000") }}
+          {% for e in form.price.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.stock.label(class="form-label fw-semibold") }} <span class="text-danger">*</span>
+          {{ form.stock(class="form-control" + (" is-invalid" if form.stock.errors else ""), placeholder="10") }}
+          {% for e in form.stock.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      {# Mô tả #}
+      <div class="mb-3">
+        {{ form.description.label(class="form-label fw-semibold") }}
+        {{ form.description(class="form-control", rows=3) }}
+      </div>
+
+      {# Ảnh bìa #}
+      <div class="mb-3">
+        {{ form.cover.label(class="form-label fw-semibold") }}
+        {% if book and book.cover_image %}
+        <div class="mb-2">
+          <img src="{{ book.cover_url }}" style="height:120px; object-fit:cover;" class="rounded border">
+          <small class="d-block text-muted mt-1">Ảnh hiện tại · Chọn ảnh mới để thay thế.</small>
+        </div>
+        {% endif %}
+        {{ form.cover(class="form-control" + (" is-invalid" if form.cover.errors else ""),
+                      accept=".jpg,.jpeg,.png,.webp") }}
+        <div class="form-text">JPG, PNG, WEBP · tối đa 2 MB</div>
+        {% for e in form.cover.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">💾 Lưu</button>
+        <a href="{{ url_for('admin_books') }}" class="btn btn-outline-secondary">Huỷ</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

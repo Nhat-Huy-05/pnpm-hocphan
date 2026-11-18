@@ -1,0 +1,97 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Quản lý sách – Quản trị{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">📚 Sách <small class="text-muted fs-6">({{ total }})</small></h4>
+  <a href="{{ url_for('admin_book_new') }}" class="btn btn-primary">+ Thêm sách</a>
+</div>
+
+{# ── Bộ lọc ── #}
+<form method="get" class="row g-2 mb-3">
+  <div class="col-sm-5">
+    <input type="text" name="q" class="form-control form-control-sm" placeholder="Tìm tên sách, tác giả..." value="{{ q }}">
+  </div>
+  <div class="col-sm-3">
+    <select name="cat" class="form-select form-select-sm">
+      <option value="">Mọi danh mục</option>
+      {% for c in categories %}
+      <option value="{{ c.id }}" {% if cat_id|string == c.id|string %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-sm-2">
+    <select name="stock" class="form-select form-select-sm">
+      <option value="">Tồn kho</option>
+      <option value="available" {% if stock_filter == 'available' %}selected{% endif %}>Còn hàng</option>
+      <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Sắp hết (≤ 5)</option>
+      <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Hết hàng</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary btn-sm">Lọc</button>
+    <a href="{{ url_for('admin_books') }}" class="btn btn-outline-secondary btn-sm">Xoá</a>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Tên sách / Tác giả</th>
+          <th>Danh mục</th>
+          <th class="text-end">Giá</th>
+          <th class="text-center">Tồn</th>
+          <th class="text-center">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ book.title }}</div>
+            <div class="text-muted small">{{ book.author }}</div>
+          </td>
+          <td><span class="badge bg-secondary">{{ book.category.name if book.category else '—' }}</span></td>
+          <td class="text-end">{{ "{:,.0f}".format(book.price) }}</td>
+          <td class="text-center {% if book.stock == 0 %}text-danger fw-bold{% endif %}">{{ book.stock }}</td>
+          <td class="text-center">
+            <a href="{{ url_for('admin_book_edit', book_id=book.id) }}" class="btn btn-sm btn-outline-primary">Sửa</a>
+            {% if book.id in booked_ids %}
+            <button class="btn btn-sm btn-outline-secondary" disabled title="Sách đã có trong đơn hàng">Xoá</button>
+            {% else %}
+            <form method="post" action="{{ url_for('admin_book_delete', book_id=book.id) }}" class="d-inline"
+                  onsubmit="return confirm('Xoá sách này?')">
+              {{ delete_form.hidden_tag() }}
+              <button class="btn btn-sm btn-outline-danger">Xoá</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-muted py-4">Không có sách nào.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ── Phân trang ── #}
+{% if total_pages > 1 %}
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <small class="text-muted">
+    Hiển thị {{ (page-1)*5 + 1 }} – {{ [page*5, total]|min }} / {{ total }} sách
+  </small>
+  <nav>
+    <ul class="pagination pagination-sm mb-0">
+      {% for p in range(1, total_pages + 1) %}
+      <li class="page-item {% if p == page %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('admin_books', q=q, cat=cat_id, stock=stock_filter, page=p) }}">{{ p }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</div>
+{% endif %}
+{% endblock %}

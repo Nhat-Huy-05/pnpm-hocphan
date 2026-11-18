@@ -1,0 +1,87 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Đơn hàng – Quản trị{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">🧾 Đơn hàng</h4>
+
+{# ── Tab trạng thái ── #}
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item">
+    <a class="nav-link {% if not status_filter %}active{% endif %}"
+       href="{{ url_for('admin_orders', q=q) }}">
+      Tất cả <span class="badge bg-secondary">{{ total_count }}</span>
+    </a>
+  </li>
+  {% for s in ORDER_STATUSES %}
+  <li class="nav-item">
+    <a class="nav-link {% if status_filter == s %}active{% endif %}"
+       href="{{ url_for('admin_orders', status=s, q=q) }}">
+      {{ s }}
+      <span class="badge bg-{{ STATUS_COLORS[s] }}">{{ status_counts.get(s, 0) }}</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+{# ── Tìm kiếm ── #}
+<form method="get" class="d-flex gap-2 mb-3">
+  {% if status_filter %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+  <input type="text" name="q" class="form-control form-control-sm" style="max-width:320px"
+         placeholder="Mã đơn, tên khách, số điện thoại..." value="{{ q }}">
+  <button class="btn btn-primary btn-sm">Tìm</button>
+  {% if q %}<a href="{{ url_for('admin_orders', status=status_filter) }}" class="btn btn-outline-secondary btn-sm">Xoá</a>{% endif %}
+</form>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Mã</th>
+          <th>Ngày đặt</th>
+          <th>Khách hàng</th>
+          <th>Điện thoại</th>
+          <th class="text-end">Tổng tiền</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr style="cursor:pointer" onclick="location.href='{{ url_for('admin_order_detail', order_id=o.id) }}'">
+          <td>#{{ o.id }}</td>
+          <td>{{ o.created_at.strftime("%d/%m/%Y") }}</td>
+          <td>{{ o.customer_name }}</td>
+          <td>{{ o.phone }}</td>
+          <td class="text-end">{{ "{:,.0f}".format(o.total) }} đ</td>
+          <td><span class="badge bg-{{ STATUS_COLORS.get(o.status, 'secondary') }}">{{ o.status }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Không có đơn hàng.</td></tr>
+        {% endfor %}
+      </tbody>
+      {% if orders %}
+      <tfoot class="table-light">
+        <tr>
+          <td colspan="4" class="text-muted small">{{ total }} đơn · tổng giá trị</td>
+          <td class="text-end fw-semibold">{{ "{:,.0f}".format(filter_total) }} đ</td>
+          <td></td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  </div>
+</div>
+
+{# ── Phân trang ── #}
+{% if total_pages > 1 %}
+<nav class="mt-3">
+  <ul class="pagination pagination-sm">
+    {% for p in range(1, total_pages + 1) %}
+    <li class="page-item {% if p == page %}active{% endif %}">
+      <a class="page-link" href="{{ url_for('admin_orders', status=status_filter, q=q, page=p) }}">{{ p }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}
